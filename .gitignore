@@ -1,0 +1,4 @@
+.DS_Store
+*.xcodeproj
+sum_by_cols
+sum_by_rows
