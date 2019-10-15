@@ -8,9 +8,10 @@
 #include <string>
 using namespace std;
 
-int Sum(string &s, int &pos);
-int Factor(string &s, int &pos);
-int Start(string &s, int &pos) {
+int Sum(const string &s, size_t &pos);
+int Factor(const string &s, size_t &pos);
+int Start(const string &s) {
+    size_t pos = -1;
     int value = Sum(s, pos);
     while (s[pos + 1] == '-' || s[pos + 1] == '+') {
         int op = s[++pos];
@@ -24,7 +25,7 @@ int Start(string &s, int &pos) {
     return value;
 }
 
-int Sum(string &s, int &pos) {
+int Sum(const string &s, size_t &pos) {
     int value = Factor(s, pos);
     while (s[pos + 1] == '*' || s[pos + 1] == '/') {
         int op = s[++pos];
@@ -41,7 +42,7 @@ int Sum(string &s, int &pos) {
     return value;
 }
 
-int Factor(string &s, int &pos) {
+int Factor(const string &s, size_t &pos) {
     bool negative = false;
     while (s[pos + 1] == '-') {
         negative = !negative;
@@ -62,7 +63,7 @@ int Factor(string &s, int &pos) {
     }
 }
 
-void get_string(string &s, char* argv) {
+void get_string(string &s, const char* argv) {
     for (size_t i = 0; i < strlen(argv); ++i) {
         if (isspace(argv[i])) {
             continue;
@@ -75,13 +76,12 @@ void get_string(string &s, char* argv) {
     }
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, const char* argv[]) {
     if (argc == 2) {
         try {
             string s;
-            int pos = -1;
             get_string(s, argv[1]);
-            int ans = Start(s, pos);
+            int ans = Start(s);
             cout << ans << endl;
         } catch (exception &err) {
             cout << err.what() << endl;
