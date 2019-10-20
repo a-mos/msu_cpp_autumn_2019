@@ -38,23 +38,24 @@ public:
     }
 };
 
-int main(int argc, const char * argv[]) {
+int main(int argc, const char *argv[]) {
     if (argc > 1) {
         LinearAllocator allocator(atoi(argv[1]));
-        for (int i = 0; i < argc; ++i) {
+        for (int i = 2; i < argc; ++i) {
             if (strstr(argv[i], "alloc") == argv[i]) {
-                auto size = atoi(argv[i] + strlen("alloc"));
-                auto tmp = allocator.alloc(size);
+                size_t size = atoi(argv[i] + strlen("alloc"));
+                char *tmp = allocator.alloc(size);
                 cout << (tmp ? "Allocated: " :  "Not allocated: ") << size << endl;
-            } else if (strstr(argv[i], "cursize") == argv[i]) {
+            } else if (strstr(argv[i], "cursize")) {
                 cout << "Cur size: " << allocator.get_cur_size() << endl;
-            } else if (strstr(argv[i], "maxsize") == argv[i]) {
+            } else if (strstr(argv[i], "maxsize")) {
                 cout << "Max size: " << allocator.get_max_size() << endl;
-            } else if (strstr(argv[i], "reset") == argv[i]) {
+            } else if (strstr(argv[i], "reset")) {
                 allocator.reset();
                 cout << "Reset" << endl;
             }
         }
+        return 0;
     } else {
         cout << "No input" << endl;
         return 1;

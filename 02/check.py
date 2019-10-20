@@ -11,7 +11,7 @@ check('', 'No input\n')
 check(['100', 'maxsize'], 'Max size: 100\n')
 check(['100', 'alloc100'], 'Allocated: 100\n')
 check(['100', 'alloc101'], 'Not allocated: 101\n')
-check(['100', 'alloc-1'], 'Not allocated: -1\n')
+check(['100', 'alloc0'], 'Not allocated: 0\n')
 
 check(['100', 'alloc10', 'cursize', 'alloc30', 'cursize', 'alloc100'], \
       'Allocated: 10\nCur size: 10\nAllocated: 30\nCur size: 40\nNot allocated: 100\n')
