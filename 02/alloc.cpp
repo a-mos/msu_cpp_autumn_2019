@@ -42,7 +42,7 @@ int main(int argc, const char *argv[]) {
     if (argc > 1) {
         LinearAllocator allocator(atoi(argv[1]));
         for (int i = 2; i < argc; ++i) {
-            if (strstr(argv[i], "alloc") == argv[i]) {
+            if (strstr(argv[i], "alloc")) {
                 size_t size = atoi(argv[i] + strlen("alloc"));
                 char *tmp = allocator.alloc(size);
                 cout << (tmp ? "Allocated: " :  "Not allocated: ") << size << endl;
