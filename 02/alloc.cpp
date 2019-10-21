@@ -10,7 +10,9 @@ public:
     LinearAllocator(size_t maxSize) {
         max_size = maxSize;
         cur_size = 0;
-        start = static_cast<char *>(malloc(maxSize));
+        if ((start = static_cast<char *>(malloc(maxSize))) == nullptr) {
+            throw bad_alloc();
+        }
         cur_pos = start;
     }
     char* alloc(size_t size) {
@@ -40,24 +42,28 @@ public:
 
 int main(int argc, const char *argv[]) {
     if (argc > 1) {
-        LinearAllocator allocator(atoi(argv[1]));
-        for (int i = 2; i < argc; ++i) {
-            if (strstr(argv[i], "alloc")) {
-                size_t size = atoi(argv[i] + strlen("alloc"));
-                char *tmp = allocator.alloc(size);
-                cout << (tmp ? "Allocated: " :  "Not allocated: ") << size << endl;
-            } else if (strstr(argv[i], "cursize")) {
-                cout << "Cur size: " << allocator.get_cur_size() << endl;
-            } else if (strstr(argv[i], "maxsize")) {
-                cout << "Max size: " << allocator.get_max_size() << endl;
-            } else if (strstr(argv[i], "reset")) {
-                allocator.reset();
-                cout << "Reset" << endl;
+        try {
+            LinearAllocator allocator(atoi(argv[1]));
+            for (int i = 2; i < argc; ++i) {
+                if (strstr(argv[i], "alloc")) {
+                    size_t size = atoi(argv[i] + strlen("alloc"));
+                    char *tmp = allocator.alloc(size);
+                    cout << (tmp ? "Allocated: " :  "Not allocated: ") << size << endl;
+                } else if (strstr(argv[i], "cursize")) {
+                    cout << "Cur size: " << allocator.get_cur_size() << endl;
+                } else if (strstr(argv[i], "maxsize")) {
+                    cout << "Max size: " << allocator.get_max_size() << endl;
+                } else if (strstr(argv[i], "reset")) {
+                    allocator.reset();
+                    cout << "Reset" << endl;
+                }
             }
+            return 0;
+        } catch (const bad_alloc& e) {
+            cout << "Allocation failed" << endl;
         }
-        return 0;
     } else {
         cout << "No input" << endl;
-        return 1;
     }
+    return 1;
 }
