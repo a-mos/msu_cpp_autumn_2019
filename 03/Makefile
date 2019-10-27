@@ -6,7 +6,7 @@ run: tests
 	./tests
 test: tests
 	python3 check.py
-tests: tests.cpp
+tests: tests.cpp matrix.h
 	$(CC) tests.cpp $(CFLAGS) -o $@
 clean:
 	rm -f tests
