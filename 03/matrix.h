@@ -7,9 +7,7 @@ public:
     
     int &operator[] (int pos) {
         if (pos <= sizeof(data) / sizeof(*data) && pos >= 0) {
-            int *ptr = data;
-            delete this;
-            return ptr[pos];
+            return data[pos];
         } else {
             throw std::out_of_range("");
         }
@@ -36,9 +34,9 @@ public:
         return cols;
     }
     
-    Proxy_Class &operator[] (int pos) const {
+    Proxy_Class operator[] (int pos) {
         if (pos < rows && pos >= 0) {
-            return *(new Proxy_Class(data[pos]));
+            return Proxy_Class(data[pos]);
         } else {
             throw std::out_of_range("");
         }
@@ -57,7 +55,7 @@ public:
         if (rows == right.getRows() && cols == right.getColumns()) {
             for (int i = 0; i < rows; ++i) {
                 for (int j = 0; j < cols; ++j) {
-                    if (data[i][j] != right[i][j]) {
+                    if (data[i][j] != right.data[i][j]) {
                         return false;
                     }
                 }
