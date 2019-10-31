@@ -5,7 +5,7 @@ using namespace std;
 int main(int argc, const char *argv[]) {
     if (argc > 1) {
         const size_t rows = 5;
-        const size_t cols = 3;
+        const size_t cols = 10;
         Matrix m1(rows, cols);
         Matrix m2(rows, cols);
         switch (atoi(argv[1])) {
@@ -13,7 +13,7 @@ int main(int argc, const char *argv[]) {
                 assert(m1.getRows() == 5);
                 break;
             case 2:
-                assert(m1.getColumns() == 3);
+                assert(m1.getColumns() == 10);
                 break;
             case 3:
                 assert(m1 == m2);
@@ -58,12 +58,7 @@ int main(int argc, const char *argv[]) {
                 }
                 break;
             case 10:
-                try {
-                    m1[1][3] = 0;
-                } catch (...) {
-                    cout << "out_of_range" << endl;
-                }
-                break;
+                m1[1][5] = 0;
             default:
                 break;
         }
