@@ -57,6 +57,13 @@ int main(int argc, const char *argv[]) {
                     cout << "out_of_range" << endl;
                 }
                 break;
+            case 10:
+                try {
+                    m1[1][3] = 0;
+                } catch (...) {
+                    cout << "out_of_range" << endl;
+                }
+                break;
             default:
                 break;
         }

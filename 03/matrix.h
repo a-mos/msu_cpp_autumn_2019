@@ -2,11 +2,12 @@ using namespace std;
 
 class Proxy_Class {
     int *data;
+    size_t cols;
 public:
-    Proxy_Class(int *data): data(data) {}
+    Proxy_Class(int *data, size_t cols): data(data), cols(cols) {}
     
-    int &operator[] (int pos) {
-        if (pos <= sizeof(data) / sizeof(*data) && pos >= 0) {
+    int &operator[] (size_t pos) {
+        if (pos < cols) {
             return data[pos];
         } else {
             throw std::out_of_range("");
@@ -34,9 +35,9 @@ public:
         return cols;
     }
     
-    Proxy_Class operator[] (int pos) {
-        if (pos < rows && pos >= 0) {
-            return Proxy_Class(data[pos]);
+    Proxy_Class operator[] (size_t pos) {
+        if (pos < rows) {
+            return Proxy_Class(data[pos], cols);
         } else {
             throw std::out_of_range("");
         }
