@@ -39,6 +39,10 @@ int main(int argc, const char *argv[]) {
                 break;
             case 10:
                	assert(a <= b && a < c && a < d && d == d && d > d - 1);
+                break;
+            case 11:
+                cout << a - a - a - a - a - a;
+                break;
             default:
                 break;
         }

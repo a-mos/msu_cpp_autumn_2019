@@ -130,7 +130,7 @@ public:
     BigInt operator-(const BigInt &r) const {
         // - - +
         if (sign && !r.sign) {
-            return -(-r + *this);
+            return -(-(*this) + r);
         }
         // - - -
         if (sign && r.sign) {
