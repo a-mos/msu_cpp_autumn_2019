@@ -1,5 +1,4 @@
 #include <sstream>
-using namespace std;
 
 enum class Error {
     NoError,
@@ -9,9 +8,9 @@ enum class Error {
 
 class Serializer {
     static constexpr char Separator = ' ';
-    ostream &out_;
+    std::ostream &out_;
 public:
-    explicit Serializer(ostream& out): out_(out) {}
+    explicit Serializer(std::ostream& out): out_(out) {}
 
     template <class T>
     Error save(T& object) {
@@ -19,16 +18,16 @@ public:
     }
 
     template <class... ArgsT>
-    Error operator()(ArgsT... args) {
-        return process(args...);
+    Error operator()(ArgsT&&... args) {
+        return process(std::forward<ArgsT>(args)...);
     }
 private:
-    Error process(uint64_t &value) {
+    Error process(uint64_t value) {
         out_ << value << Separator;
         return Error::NoError;
     }
 
-    Error process(bool &value) {
+    Error process(bool value) {
         out_ << (value ? "true" : "false") << Separator;
         return Error::NoError;
     }
@@ -36,7 +35,7 @@ private:
     template <class T, class... ArgsT>
     Error process(T&& value, ArgsT&&... args) {
         if (process(value) == Error::NoError) {
-            return process(forward<ArgsT>(args)...);
+            return process(std::forward<ArgsT>(args)...);
         } else {
             return Error::CorruptedArchive;
         }
@@ -45,9 +44,9 @@ private:
 
 
 class Deserializer {
-    istream& in_;
+    std::istream& in_;
 public:
-    explicit Deserializer(istream& in) : in_(in) {}
+    explicit Deserializer(std::istream& in) : in_(in) {}
 
     template <class T>
     Error load(T& object) {
@@ -56,23 +55,23 @@ public:
 
     template <class... ArgsT>
     Error operator()(ArgsT&&... args) {
-        return load(forward<ArgsT>(args)...);
+        return load(std::forward<ArgsT>(args)...);
     }
 
 private:
     Error load(uint64_t &value) {
-        string text;
+        std::string text;
         in_ >> text;
         try {
-            value = stoull(text);
-        } catch (...) {
+            value = std::stoull(text);
+        } catch (std::invalid_argument) {
             return Error::CorruptedArchive;
         }
         return Error::NoError;
     }
 
     Error load(bool &value) {
-        string text;
+        std::string text;
         in_ >> text;
         if (text == "true") {
             value = true;
@@ -87,7 +86,7 @@ private:
     template <class T, class... ArgsT>
     Error load(T&& value, ArgsT&&... args) {
         if (load(value) == Error::NoError) {
-            return load(forward<ArgsT>(args)...);
+            return load(std::forward<ArgsT>(args)...);
         } else {
             return Error::CorruptedArchive;
         }
