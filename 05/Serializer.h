@@ -66,6 +66,8 @@ private:
             value = std::stoull(text);
         } catch (std::invalid_argument) {
             return Error::CorruptedArchive;
+        } catch (std::out_of_range) {
+            return Error::CorruptedArchive;
         }
         return Error::NoError;
     }
