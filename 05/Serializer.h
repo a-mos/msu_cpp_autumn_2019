@@ -23,18 +23,18 @@ public:
         return process(args...);
     }
 private:
-    Error process(uint64_t value) {
+    Error process(uint64_t &value) {
         out_ << value << Separator;
         return Error::NoError;
     }
 
-    Error process(bool value) {
+    Error process(bool &value) {
         out_ << (value ? "true" : "false") << Separator;
         return Error::NoError;
     }
 
     template <class T, class... ArgsT>
-    Error process(T value, ArgsT... args) {
+    Error process(T&& value, ArgsT&&... args) {
         if (process(value) == Error::NoError) {
             return process(forward<ArgsT>(args)...);
         } else {
@@ -56,11 +56,11 @@ public:
 
     template <class... ArgsT>
     Error operator()(ArgsT&&... args) {
-        return load(args...);
+        return load(forward<ArgsT>(args)...);
     }
 
 private:
-    Error load(uint64_t& value) {
+    Error load(uint64_t &value) {
         string text;
         in_ >> text;
         try {
@@ -71,7 +71,7 @@ private:
         return Error::NoError;
     }
 
-    Error load(bool& value) {
+    Error load(bool &value) {
         string text;
         in_ >> text;
         if (text == "true") {
