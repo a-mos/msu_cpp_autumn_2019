@@ -1,4 +1,5 @@
 #include <iostream>
+#include <exception>
 #include <fstream>
 #include <thread>
 #include <vector>
@@ -29,7 +30,13 @@ auto split_to_files(std::ifstream &input, uint64_t* buff) {
         t1.join();
         t2.join();
         std::ofstream f1(out_names[f_idx], std::ios::binary);
+        if (!f1) {
+            throw std::ofstream::failure(out_names[f_idx]);
+        }
         std::ofstream f2(out_names[f_idx + 1], std::ios::binary);
+        if (!f2) {
+            throw std::ofstream::failure(out_names[f_idx + 1]);
+        }
         f1.write(reinterpret_cast<const char*>(buff), sizeof(uint64_t) * readed / 2);
         f2.write(reinterpret_cast<const char*>(buff + readed / 2), sizeof(uint64_t) * readed / 2);
         f1.close();
@@ -46,7 +53,13 @@ void merge_files(std::vector <std::string> &names, uint64_t* buff) {
         size_t pos = 0;
         uint64_t cur;
         std::ifstream f1(names[i], std::ios::binary);
+        if (!f1) {
+            throw std::ifstream::failure(names[i]);
+        }
         std::ifstream f2(names[i + 1], std::ios::binary);
+        if (!f2) {
+            throw std::ifstream::failure(names[i + 1]);
+        }
         f1.read(reinterpret_cast<char*>(&cur), sizeof(uint64_t));
         f2.seekg(0, f2.end);
         size_t len = f2.tellg() / sizeof(uint64_t);
@@ -55,6 +68,9 @@ void merge_files(std::vector <std::string> &names, uint64_t* buff) {
         f2.close();
         
         std::ofstream of(names[i + 1], std::ios::binary);
+        if (!of) {
+            throw std::ofstream::failure(names[i + 1]);
+        }
         while (pos < len && !f1.eof()) {
             if (cur > buff[pos]) {
                 of.write(reinterpret_cast<const char*>(&buff[pos]), sizeof(uint64_t));
@@ -83,8 +99,7 @@ void merge_files(std::vector <std::string> &names, uint64_t* buff) {
 }
 
 void remove_tmp_files(std::vector <std::string> &names, const char *out_name) {
-    auto num_files = names.size();
-    std::rename(names[num_files - 1].c_str(), out_name);
+    std::rename(names.back().c_str(), out_name);
     names.pop_back();
     for (auto &name: names) {
         std::remove(name.c_str());
@@ -92,11 +107,21 @@ void remove_tmp_files(std::vector <std::string> &names, const char *out_name) {
 }
 
 int main(const int argc, const char **argv) {
-    uint64_t* buff = new uint64_t [MAX_ELEMENTS_IN_MEMORY];
     std::ifstream input(argv[1], std::ios::binary);
-    auto names = split_to_files(input, buff);
-    merge_files(names, buff);
-    remove_tmp_files(names, argv[2]);
+    if (!input) {
+        std::cout << "IO error!" << std::endl;
+        return 1;
+    }
+    uint64_t* buff = new uint64_t [MAX_ELEMENTS_IN_MEMORY];
+    try {
+        auto names = split_to_files(input, buff);
+        merge_files(names, buff);
+        remove_tmp_files(names, argv[2]);
+    } catch (std::exception &exc) {
+        std::cout << exc.what() << std::endl;
+        delete [] buff;
+        return 1;
+    }
     delete [] buff;
     return 0;
 }
