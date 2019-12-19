@@ -107,6 +107,10 @@ void remove_tmp_files(std::vector <std::string> &names, const char *out_name) {
 }
 
 int main(const int argc, const char **argv) {
+    if (argc != 3) {
+        std::cout << "Not enough arguments – input and output names required" << std::endl;
+        return 1;
+    }
     std::ifstream input(argv[1], std::ios::binary);
     if (!input) {
         std::cout << "IO error!" << std::endl;
